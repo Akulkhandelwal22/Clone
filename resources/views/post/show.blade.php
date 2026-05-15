@@ -5,16 +5,10 @@
                 <h1 class="text-3xl mb-4">{{ $post->title }}</h1>
                 {{-- User Avatar --}}
                 <div class="flex gap-4">
-                    @if ($post->user->image)
-                        <img src="{{ $post->user->imageUrl() }}" alt="{{ $post->user->name }}"
-                            class="w-12 h-12 rounded-full">
-                    @else
-                        <img src="https://imgs.search.brave.com/GH0DWT1kuxlsr4wGH40ixHh0QvnKD4BJxZZ1_OQNKyw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9waXh5/Lm9yZy9zcmMvMzEv/dGh1bWJzMzUwLzMx/NTE2MC5qcGc"
-                            alt="Dummy Avatar" class="w-12 h-12 rounded-full">
-                    @endif
+                    <x-user-avatar :user="$post->user"/>
                     <div>
                         <div class="flex gap-2">
-                            <h3>{{ $post->user->name }}</h3>
+                            <a href="{{ route('profile.show',$post->user )}}" class="hover:underline">{{ $post->user->name }}</a>
                             &middot;
                             <a href="#" class="text-emerald-600">Follow</a>
                         </div>
