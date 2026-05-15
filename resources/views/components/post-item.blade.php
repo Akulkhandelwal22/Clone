@@ -1,6 +1,10 @@
 <div class="flex bg-neutral-primary-soft p-6 border border-default rounded-base shadow-xs mb-8">
     <div class="p-5 flex-1">
-        <a href="#">
+        <a href="{{ route('post.show', [
+        'username' => $post->user->username,
+            'post' => $post->slug,
+            
+        ]) }}">
             <h5 class="mt-6 mb-2 text-2xl font-semibold tracking-tight text-heading">
                 {{ $post->title }}
             </h5>
