@@ -10,17 +10,16 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 #[Fillable(['name', 'username', 'image', 'bio', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements MustVerifyEmail, HasMedia
+class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, InteractsWithMedia;
+    use HasFactory, InteractsWithMedia, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -42,6 +41,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
             ->width(128)
             ->crop(128, 128);
     }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')->singleFile();
@@ -51,6 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
     {
         return $this->hasMany(Post::class);
     }
+
     public function following()
     {
         return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id');
@@ -63,14 +64,19 @@ class User extends Authenticatable implements MustVerifyEmail, HasMedia
 
     public function imageUrl()
     {
-        return $this->getFirstMedia('avatar')?->getUrl('avatar');
+        $media = $this->getFirstMedia('avatar');
+        if ($media->hasGeneratedConversion('avatar')) {
+            return $media->getUrl('avatar');
+        }
+        return $media->getUrl();
     }
 
     public function isFollowedBy(?User $user)
     {
-        if (!$user) {
+        if (! $user) {
             return false;
         }
+
         return $this->followers()->where('follower_id', $user->id)->exists();
     }
 
