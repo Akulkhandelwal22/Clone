@@ -11,13 +11,12 @@
                             <a href="{{ route('profile.show', $post->user)}}"
                                 class="hover:underline">{{ $post->user->name }}</a>
                             @auth
-                            @if(auth()->user() && auth()->user()->id !== $post->user->id)
-                            &middot;
-                            <button x-text="following ? 'Unfollow' : 'Follow'"
-                                :class="following ? 'text-red-600' : 'text-green-600' "
-                                @click="follow()">
-                            </button>
-                            @endif
+                                @if(auth()->user() && auth()->user()->id !== $post->user->id)
+                                    &middot;
+                                    <button x-text="following ? 'Unfollow' : 'Follow'"
+                                        :class="following ? 'text-red-600' : 'text-green-600' " @click="follow()">
+                                    </button>
+                                @endif
                             @endauth
                         </x-follow-ctr>
                         <div class="flex gap-2 text-sm text-gray-500">
@@ -28,6 +27,21 @@
                     </div>
                 </div>
                 {{-- User Avatar --}}
+
+                @if ($post->user_id === Auth::id())
+                    <div class="py-4 mt-8 border-t border-b border-gray-200">
+                        <x-primary-button href="{{ route('post.edit',$post->slug) }}">
+                            Edit Post
+                        </x-primary-button>
+                        <form class="inline-block" action="{{ route('post.destroy', $post) }}" method="post">
+                            @csrf
+                            @method('delete')
+                        <x-danger-button>
+                            Delete Post
+                        </x-danger-button>
+                        </form>
+                    </div>
+                @endif
 
                 {{-- Clap Section --}}
                 <x-clap-button :post="$post" />
