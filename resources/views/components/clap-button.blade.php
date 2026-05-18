@@ -1,5 +1,6 @@
 @props(['post'])
 
+@auth 
 {{-- Clap Section --}}
 <div x-data="{
     hasClapped: {{ auth()->user()->hasClapped($post) ? 'true' : 'false' }},
@@ -33,3 +34,4 @@
     </button>
 </div>
 {{-- Clap Section --}}
+@endauth
